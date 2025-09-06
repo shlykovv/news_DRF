@@ -76,8 +76,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config("POSTGRES_DB", default="newssite"),
+        'USER': config("POSTGRES_USER", default="newsuser"),
+        'PASSWORD': config("POSTGRES_PASSWORD"),
+        'HOST': config("HOST", default="localhost"),
+        'PORT': config("PORT", default="5432", cast=int),
+        'ATOMIC_REQUESTS': True,
     }
 }
 

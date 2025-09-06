@@ -21,7 +21,7 @@ class RegisterAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(request=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
@@ -42,11 +42,11 @@ class LoginAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(request=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serialzier.validated_data.get("user")
+        user = serializer.validated_data.get("user")
         
-        login(user)
+        login(request, user)
         refresh = RefreshToken.for_user(user)
         
         return Response({
@@ -80,7 +80,7 @@ class ChangePasswordAPIView(generics.UpdateAPIView):
         return self.request.user
     
     def update(self, request, *args, **kwargs):
-        serializer = self.get_serialzier(request=request.data)
+        serializer = self.get_serialzier(data=request.data)
         serializer.is_valid(raise_exceprion=True)
         serializer.save()
         
