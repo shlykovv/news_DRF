@@ -32,7 +32,7 @@ class CustomUserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class CustomUserSerializer(serializers.Serializer):
+class CustomUserLoginSerializer(serializers.Serializer):
     """Сериализатор для входа пользователя"""
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -85,7 +85,7 @@ class CustomUserProfileSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
 
-class CustomUserUpdateSerializer(serializers.ModelSerialzier):
+class CustomUserUpdateSerializer(serializers.ModelSerializer):
     """Сериализатор для обновления профиля у пользователя"""
     
     class Meta:
