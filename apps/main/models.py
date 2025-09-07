@@ -66,25 +66,25 @@ class Post(models.Model):
             models.Index(fields=("author", "-created_at"))
         )
         
-        def __str__(self):
-            return self.title
-        
-        def save(self, *args, **kwargs):
-            if not self.slug:
-                self.slug = slugify(self.title)
-            super().save(*args, **kwargs)
-        
-        def get_absolute_url(self):
-            return reverse("post-detail", kwargs={"slug": self.slug})
-        
-        @property
-        def comments_count(self):
-            """Количество комментариев к посту"""
-            return self.comments.filter(is_active=True).count()
-        
-        def increment_views(self):
-            """Увеличиваем счетчик просмотров"""
-            self.views_count += 1
-            self.save(update_fields=["views_count"])
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return reverse("post-detail", kwargs={"slug": self.slug})
+    
+    @property
+    def comments_count(self):
+        """Количество комментариев к посту"""
+        return self.comments.filter(is_active=True).count()
+    
+    def increment_views(self):
+        """Увеличиваем счетчик просмотров"""
+        self.views_count += 1
+        self.save(update_fields=["views_count"])
         
         
