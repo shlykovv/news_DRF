@@ -21,12 +21,33 @@ class CategorySerialzier(serializers.ModelsSerializer):
         return super().create(validated_data)
 
 
-class PostDetailSerializer(serializers.ModelSerializer):
+class PostListSerializer(serializers.ModelSerializer):
     """Сериализатор для списка постов"""
     author = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
     comments_count = serializers.ReadOnlyField()
     
+    class Meta:
+        model = Post
+        fields = ("id", "title", "slug", "content", "image", "category",
+                  "author", "status", "created_at" "updated_at",
+                  "views_count", "comments_count")
+        
+        read_only_fields = ("slug", "author", "views_count")
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Обрезаем контент для списка
+        if len(data["content"]) > 200:
+            data["content"] = data["content"][:200] + "..."
+        return data
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    """Сериализатор для детального просмотра поста"""
+    author_info = serializers.SerializerMethodField()
+    category_info = serializers.SerializerMethodField()
+    comments_count = serializers.ReadOnlyField()
     class Meta:
         model = Post
         fields = ("id", "title", "slug", "content", "image", "category",

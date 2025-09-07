@@ -33,7 +33,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     constent = models.TextField()
     image = models.ImageField(upload_to="posts/", blank=True, null=True)
-    categories = models.ForeignKey(
+    category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
@@ -62,7 +62,7 @@ class Post(models.Model):
         indexes = (
             models.Index(fields=("-created_at",)),
             models.Index(fields=("status", "created_at")),
-            models.Index(fields=("categories", "-created_at")),
+            models.Index(fields=("category", "-created_at")),
             models.Index(fields=("author", "-created_at"))
         )
         
