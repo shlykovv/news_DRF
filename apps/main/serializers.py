@@ -4,7 +4,7 @@ from django.utils.text import slugify
 from .models import Post, Category
 
 
-class CategorySerialzier(serializers.ModelsSerializer):
+class CategorySerialzier(serializers.ModelSerializer):
     """Сериализатор для категорий"""
     posts_count = serializers.SerializerMethodField()
     

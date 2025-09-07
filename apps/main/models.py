@@ -82,7 +82,7 @@ class Post(models.Model):
         """Количество комментариев к посту"""
         return self.comments.filter(is_active=True).count()
     
-    def increment_views(self):
+    def increments_views(self):
         """Увеличиваем счетчик просмотров"""
         self.views_count += 1
         self.save(update_fields=["views_count"])
