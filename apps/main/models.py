@@ -31,7 +31,7 @@ class Post(models.Model):
     STATUS_CHOICES = (("DRAFT", "Draft"), ("PUBLISHED", "Published"))
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
-    constent = models.TextField()
+    content = models.TextField()
     image = models.ImageField(upload_to="posts/", blank=True, null=True)
     category = models.ForeignKey(
         Category,

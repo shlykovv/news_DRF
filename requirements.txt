@@ -10,5 +10,7 @@ psycopg2==2.9.10
 psycopg2-binary==2.9.10
 PyJWT==2.10.1
 python-decouple==3.8
+six==1.17.0
 sqlparse==0.5.3
+transliterate==1.10.2
 tzdata==2025.2

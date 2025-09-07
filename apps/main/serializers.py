@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils.text import slugify
+from transliterate import translit
 
 from .models import Post, Category
 
@@ -17,7 +18,12 @@ class CategorySerialzier(serializers.ModelSerializer):
         return obj.posts.filter(status="PUBLISHED").count()
     
     def create(self, validated_data):
-        validated_data["slug"] = slugify(validated_data["name"])
+        if "slug" not in validated_data or not validated_data["slug"]:
+            try:
+                transliterated = translit(validated_data["name"], "ru", reversed=True)
+                validated_data["slug"] = slugify(transliterated)
+            except:
+                validated_data["slug"] = slugify(validated_data["name"])
         return super().create(validated_data)
 
 
@@ -30,7 +36,7 @@ class PostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ("id", "title", "slug", "content", "image", "category",
-                  "author", "status", "created_at" "updated_at",
+                  "author", "status", "created_at", "updated_at",
                   "views_count", "comments_count")
         
         read_only_fields = ("slug", "author", "views_count")
@@ -50,8 +56,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
     comments_count = serializers.ReadOnlyField()
     class Meta:
         model = Post
-        fields = ("id", "title", "slug", "content", "image", "category",
-                  "author", "status", "created_at" "updated_at",
+        fields = ("id", "title", "slug", "content", "image", "category_info",
+                  "author_info", "status", "created_at", "updated_at",
                   "views_count", "comments_count")
         
         read_only_fields = ("slug", "author", "views_count")
@@ -80,13 +86,23 @@ class PostCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ("title", "content", "image", "category", "status")
-    
+
+
     def create(self, validated_data):
         validated_data["author"] = self.context["request"].user
-        validated_data["slug"] = slugify(validated_data["title"])
+        if "slug" not in validated_data or not validated_data["slug"]:
+            try:
+                transliterated = translit(validated_data["title"], "ru", reversed=True)
+                validated_data["slug"] = transliterated.lower().replace(" ", "-")
+            except:
+                validated_data["slug"] = slugify(validated_data["title"])
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
         if "title" in validated_data:
-            validated_data["slug"] = slugify(validated_data["title"])
+            try:
+                transliterated = translit(validated_data["title"], "ru", reversed=True)
+                validated_data["slug"] = transliterated.lower().replace(" ", "-")
+            except:
+                validated_data["slug"] = slugify(validated_data["title"])
         return super().update(instance, validated_data)
