@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Post, Category
 from .serializers import (
-    CategorySerialzier,
+    CategorySerializer,
     PostCreateUpdateSerializer,
     PostDetailSerializer,
     PostListSerializer
@@ -18,7 +18,7 @@ from .permissions import IsAuthorOrReadOnly
 
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
-    serializer_class = CategorySerialzier
+    serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "description"]
@@ -29,7 +29,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     """API endpoint для конкретной категории"""
     queryset = Category.objects.all()
-    serializer_class = CategorySerialzier
+    serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = "slug"
 

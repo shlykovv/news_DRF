@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from django.utils.text import slugify
-from transliterate import translit
+from transliterate import slugify
 
 from .models import Post, Category
 
 
-class CategorySerialzier(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для категорий"""
     posts_count = serializers.SerializerMethodField()
     
@@ -18,13 +17,13 @@ class CategorySerialzier(serializers.ModelSerializer):
         return obj.posts.filter(status="PUBLISHED").count()
     
     def create(self, validated_data):
-        if "slug" not in validated_data or not validated_data["slug"]:
-            try:
-                transliterated = translit(validated_data["name"], "ru", reversed=True)
-                validated_data["slug"] = slugify(transliterated)
-            except:
-                validated_data["slug"] = slugify(validated_data["name"])
+        validated_data["slug"] = slugify(validated_data["name"])
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        if "title" in validated_data:
+            validated_data["slug"] = slugify(validated_data["title"])
+            return super().update(instance, validated_data)
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -90,19 +89,10 @@ class PostCreateUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data["author"] = self.context["request"].user
-        if "slug" not in validated_data or not validated_data["slug"]:
-            try:
-                transliterated = translit(validated_data["title"], "ru", reversed=True)
-                validated_data["slug"] = transliterated.lower().replace(" ", "-")
-            except:
-                validated_data["slug"] = slugify(validated_data["title"])
+        validated_data["slug"] = slugify(validated_data["title"])
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
         if "title" in validated_data:
-            try:
-                transliterated = translit(validated_data["title"], "ru", reversed=True)
-                validated_data["slug"] = transliterated.lower().replace(" ", "-")
-            except:
-                validated_data["slug"] = slugify(validated_data["title"])
+            validated_data["slug"] = slugify(validated_data["title"])
         return super().update(instance, validated_data)

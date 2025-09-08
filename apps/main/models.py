@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.utils.text import slugify
 from django.urls import reverse
 
 
@@ -19,17 +18,12 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
 
 
 class Post(models.Model):
     """Модель постов"""
     STATUS_CHOICES = (("DRAFT", "Draft"), ("PUBLISHED", "Published"))
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     content = models.TextField()
     image = models.ImageField(upload_to="posts/", blank=True, null=True)
@@ -68,11 +62,6 @@ class Post(models.Model):
         
     def __str__(self):
         return self.title
-    
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"slug": self.slug})
